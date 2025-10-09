@@ -130,9 +130,9 @@ def convert_files(direction="notebook_to_python"):
 import boto3
 import math
 
-def calculate_tuning_job_time(tuner):
+def calculate_tuning_job_time(tuner, region):
     # Initialize SageMaker client
-    sagemaker_client = boto3.client("sagemaker")
+    sagemaker_client = boto3.client("sagemaker", region_name=region)
     
     # Retrieve tuning job name and details
     tuning_job_name = tuner.latest_tuning_job.name  # Replace with your tuning job name if needed
@@ -207,19 +207,19 @@ def list_running_ec2_instances():
             instances.append({'InstanceId': instance['InstanceId'], 'InstanceType': instance['InstanceType']})
     return instances
 
-def get_sagemaker_notebook_status(notebook_instance_name):
+def get_sagemaker_notebook_status(notebook_instance_name, region):
     """
     Fetches the status of a SageMaker notebook instance.
     """
-    sagemaker_client = boto3.client('sagemaker')
+    sagemaker_client = boto3.client('sagemaker', region_name=region)
     response = sagemaker_client.describe_notebook_instance(NotebookInstanceName=notebook_instance_name)
     return response['NotebookInstanceStatus']
 
-def get_notebook_instance_info(notebook_instance_name):
+def get_notebook_instance_info(notebook_instance_name, region):
     """
     Fetches the status and instance type of a specific SageMaker notebook instance.
     """
-    sagemaker_client = boto3.client('sagemaker')
+    sagemaker_client = boto3.client('sagemaker', region_name=region)
     response = sagemaker_client.describe_notebook_instance(NotebookInstanceName=notebook_instance_name)
     return {'Status': response['NotebookInstanceStatus'], 'InstanceType': response['InstanceType']}
 
@@ -318,11 +318,11 @@ if __name__ == "__main__":
 
     # Example: Check the status of a specific SageMaker notebook instance
     notebook_instance_name = 'YourNotebookInstanceName'  # Replace with your notebook instance name
-    status = get_sagemaker_notebook_status(notebook_instance_name)
+    status = get_sagemaker_notebook_status(notebook_instance_name, region)
     print(f"SageMaker Notebook '{notebook_instance_name}' Status: {status}")
 
     # Example: Fetch status and instance type of a specific notebook instance
-    notebook_info = get_notebook_instance_info(notebook_instance_name)
+    notebook_info = get_notebook_instance_info(notebook_instance_name, region)
     print(f"Notebook Instance Info for '{notebook_instance_name}':")
     print(f"Status: {notebook_info['Status']}, Instance Type: {notebook_info['InstanceType']}")
 
